@@ -22,9 +22,16 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
     /**
      * {@inheritDoc}
      */
-    public function getPairs(): array
+    public function getPairs(?int $limit = null, ?int $offset = null): array
     {
         $query = "SHOW TAG VALUES FROM {$this->measurement()} WITH KEY = \"{$this->tagKey()}\"";
+        if ($limit) {
+            $query .= " LIMIT $limit";
+        }
+        if ($offset) {
+            $query .= " OFFSET $offset";
+        }
+
         $results = InfluxDB::query($query)
             ->getPoints();
 
@@ -39,5 +46,13 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
     public function tagKey(): string
     {
         return self::DEFAULT_TAG_KEY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isWhitelisted(): bool
+    {
+        return in_array($this->measurement(), config('influxdb.measurements'));
     }
 }
