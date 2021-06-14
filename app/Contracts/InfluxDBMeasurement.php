@@ -2,6 +2,9 @@
 
 namespace App\Contracts;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
 interface InfluxDBMeasurement
 {
     /**
@@ -48,4 +51,33 @@ interface InfluxDBMeasurement
      * @return bool
      */
     public function isWhitelisted(): bool;
+
+    /**
+     * Query and return data for a given pair
+     *
+     * @param string $pair
+     * @param array $filters
+     * @return array
+     */
+    public function queryPair(string $pair, array $filters = []): array;
+
+    /**
+     * Build a singular JSON resource for a given record. Each measurement
+     * can potentially have different data schemas and each individual service
+     * is responsible for building a standardized response with its specific schema.
+     *
+     * @param array $data
+     * @return JsonResource
+     */
+    public function buildResource(array $data): JsonResource;
+
+    /**
+     * Builds a collection of JSON resources for the associated measurement.
+     *
+     * @param array $data
+     * @param bool $has_next_page
+     *
+     * @return ResourceCollection
+     */
+    public function buildResourceCollection(array $data, bool $has_next_page): ResourceCollection;
 }

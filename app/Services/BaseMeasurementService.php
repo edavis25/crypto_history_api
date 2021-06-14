@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Contracts\InfluxDBMeasurement;
+use Carbon\Carbon;
 use TrayLabs\InfluxDB\Facades\InfluxDB;
 
 /**
  * Abstract class that should be extended by other instantiatable services that are associated with
- * influxDB Measurements. Extending this class partially fulfills requirements for the InfluxDBMeasurement.
- * Interface. The rest of the methods in this contract will need to be fulfilled by the extending children.
+ * InfluxDB Measurements. Extending this class fills most requirements for the InfluxDBMeasurement contract.
+ * The rest of the methods in this contract will need to be fulfilled by the extending children.
  *
  * e.g. the PoloniexService interacts exclusively with the "poloniex" measurement for historical price data.
  */
@@ -18,6 +19,11 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
      * Default InfluxDB Tag key used by the measurement for tracking price data for trading pair.
      */
     const DEFAULT_TAG_KEY = 'pair';
+
+    /**
+     * Default sort order for results.
+     */
+    const DEFAULT_SORT_ORDER = 'DESC';
 
     /**
      * {@inheritDoc}
@@ -54,5 +60,71 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
     public function isWhitelisted(): bool
     {
         return in_array($this->measurement(), config('influxdb.measurements'));
+    }
+
+    /**
+     * Build query and return results for a specific trading pair.
+     *
+     * @param string $pair
+     * @param array $filters
+     * @return mixed
+     */
+    public function queryPair(string $pair, array $filters = []): array
+    {
+        $conditions = $this->buildWhereConditions(array_merge($filters, [
+            'pair' => $pair
+        ]));
+
+        $results = InfluxDB::getQueryBuilder()
+            ->select("*")
+            ->from($this->measurement())
+            ->where($conditions)
+            ->orderBy('time', $this->validOrder($filters['order'] ?? null))
+            ->limit($filters['per_page'])
+            ->offset($filters['offset']);
+
+        return $results->getResultSet()->getPoints();
+    }
+
+    /**
+     * Build supported conditions for the query's WHERE clause
+     * formatted for the InfluxDB facade.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function buildWhereConditions(array $data): array
+    {
+        $conditions = [];
+        if ($pair = $data['pair'] ?? false) {
+            array_push($conditions, "pair = '$pair'");
+        }
+
+        if ($after = $data['after'] ?? false) {
+            $iso_date = Carbon::createFromTimestamp($after)->toISOString();
+            array_push($conditions, "time >= '$iso_date'");
+        }
+
+        if ($before = $data['before'] ?? false) {
+            $iso_date = Carbon::createFromTimestamp($before)->toISOString();
+            array_push($conditions, "time <= '$iso_date'");
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * Validate and return sort order.
+     *
+     * @param string|null $sort_order
+     * @return string
+     */
+    protected function validOrder(?string $sort_order = null): string
+    {
+        if ($sort_order && in_array(strtoupper($sort_order), ['ASC', 'DESC'])) {
+            return strtoupper($sort_order);
+        }
+
+        return strtoupper(self::DEFAULT_SORT_ORDER);
     }
 }
