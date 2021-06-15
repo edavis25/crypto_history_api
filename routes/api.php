@@ -15,14 +15,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 # Todo route ideas:
-# /{exchange}/pairs (listing of available pairs)
-# /{exchange}/pair (query for specific pair)
 # /{exchange}/last price
-# /{exchange}/
-Route::get('/', function (Request $request) {
-    return 'good job';
-});
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/exchanges', 'ExchangeController@index')
+    ->name('exchanges');
+
+Route::get('/{exchange}/pairs', 'ExchangePairController@index')
+    ->name('exchange.pairs');
+
+Route::get('/{exchange}/pairs/{pair}', 'ExchangePairController@show')
+    ->name('exchange.pairs.show');
+
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});

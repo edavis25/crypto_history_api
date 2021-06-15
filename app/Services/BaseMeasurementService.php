@@ -112,8 +112,21 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
     protected function buildWhereConditions(array $data): array
     {
         $conditions = [];
+
+        // if given a pair, we won't accept the "pairs" param.
         if ($pair = $data['pair'] ?? false) {
             array_push($conditions, "pair = '$pair'");
+        } elseif ($data['pairs'] ?? false) {
+            // pairs comes in as comma delimited list.
+            $pairs = explode(',', $data['pairs']);
+
+            // builds a query string like: (pair = 'usd_btc' OR pair = 'usd_eth')
+            $separator = "{$this->tagKey()} =";
+            $formatted_pairs = implode(" OR $separator ", array_map(function ($item) {
+                return "'$item'";
+            }, $pairs));
+
+            array_push($conditions, "($separator $formatted_pairs)");
         }
 
         if ($after = $data['after'] ?? false) {
