@@ -71,17 +71,33 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
      */
     public function queryPair(string $pair, array $filters = []): array
     {
-        $conditions = $this->buildWhereConditions(array_merge($filters, [
+        $filters = array_merge($filters, [
             'pair' => $pair
-        ]));
+        ]);
 
+        return $this->query($filters);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $filters
+     * @return array
+     */
+    public function query(array $filters = []): array
+    {
         $results = InfluxDB::getQueryBuilder()
             ->select("*")
             ->from($this->measurement())
-            ->where($conditions)
-            ->orderBy('time', $this->validOrder($filters['order'] ?? null))
-            ->limit($filters['per_page'])
-            ->offset($filters['offset']);
+            ->where($this->buildWhereConditions($filters))
+            ->orderBy('time', $this->validOrder($filters['order'] ?? null));
+
+        if ($limit = $filters['per_page'] ?? false) {
+            $results->limit($limit);
+        }
+        if ($offset = $filters['offset'] ?? false) {
+            $results->offset($offset);
+        }
 
         return $results->getResultSet()->getPoints();
     }

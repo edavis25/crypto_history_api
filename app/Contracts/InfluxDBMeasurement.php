@@ -53,7 +53,15 @@ interface InfluxDBMeasurement
     public function isWhitelisted(): bool;
 
     /**
-     * Query and return data for a given pair
+     * Perform a paginated query on the associated measurement.
+     *
+     * @param array $filters
+     * @return mixed
+     */
+    public function query(array $filters = []): array;
+
+    /**
+     * Query and return data for a given pair.
      *
      * @param string $pair
      * @param array $filters

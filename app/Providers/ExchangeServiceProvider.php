@@ -27,8 +27,7 @@ class ExchangeServiceProvider extends ServiceProvider
          */
 
         $this->app->when(ExchangePairController::class)
-            ->needs(
-                InfluxDBMeasurement::class)
+            ->needs(InfluxDBMeasurement::class)
             ->give(function () {
                 // this is a hack for fixing broken artisan commands. when app boots in the console, we don't have
                 // the necessary request data to resolve a service dynamically, so we are just defaulting a working one.
