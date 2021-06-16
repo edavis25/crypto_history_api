@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\IsPositiveInteger;
+use App\Rules\IsValidSortOrder;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ExchangePairRequest extends FormRequest
@@ -40,11 +41,7 @@ class ExchangePairRequest extends FormRequest
             'order' => [
                 'sometimes',
                 'required',
-                function ($attribute, $value, $fail) {
-                    if (!in_array(strtoupper($value), ['ASC', 'DESC'])) {
-                        $fail("Order must be: 'ASC' or 'DESC'.");
-                    }
-                }
+                new IsValidSortOrder
             ],
         ];
     }
