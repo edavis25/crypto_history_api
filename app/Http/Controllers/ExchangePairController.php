@@ -30,10 +30,10 @@ class ExchangePairController extends Controller
     /**
      * Return a listing of all historical data for a given exchange.
      *
-     * @param Request $request
+     * @param ExchangePairRequest $request
      * @return JsonResource
      */
-    public function index(Request $request): JsonResource
+    public function index(ExchangePairRequest $request): JsonResource
     {
         // todo validation
         // todo scopes

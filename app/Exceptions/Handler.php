@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -50,6 +53,34 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($request->wantsJson()) {
+            if ($exception instanceof HttpException) {
+                $message = "";
+                if ($exception->getStatusCode() === 400) {
+                    $message = 'Bad request.';
+                } elseif ($exception->getStatusCode() === 401) {
+                    $message = 'Unauthorized.';
+                } elseif ($exception->getStatusCode() === 403) {
+                    $message = 'Forbidden.';
+                } elseif ($exception->getStatusCode() === 404) {
+                    $message = 'Resource not found';
+                }
+
+                return response()->json([
+                    'code'  => $exception->getStatusCode(),
+                    'message' => $message ?: $exception->getMessage() ?: 'Something went wrong.',
+                ], $exception->getStatusCode());
+            }
+
+            if ($exception instanceof ValidationException) {
+                return response()->json([
+                    'code' => 422,
+                    'message' => $exception->getMessage(),
+                    'errors' => $exception->errors()
+                ], 422);
+            }
+        }
+
         return parent::render($request, $exception);
     }
 }
