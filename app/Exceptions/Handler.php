@@ -5,7 +5,6 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -63,7 +62,7 @@ class Handler extends ExceptionHandler
                 } elseif ($exception->getStatusCode() === 403) {
                     $message = 'Forbidden.';
                 } elseif ($exception->getStatusCode() === 404) {
-                    $message = 'Resource not found';
+                    $message = 'Resource not found.';
                 }
 
                 return response()->json([

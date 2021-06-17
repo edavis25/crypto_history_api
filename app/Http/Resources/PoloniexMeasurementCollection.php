@@ -38,7 +38,7 @@ class PoloniexMeasurementCollection extends ResourceCollection
             'links' => [
                 'prev' => ($this->currentPage($request) > 1) ? $this->previousPage($request) : null,
                 'next' => $this->has_next_page ? $this->nextPage($request) : null,
-                'self' => $this->buildUrlWithQueryParams($request, $this->currentPage($request))
+                'current' => $this->buildUrlWithQueryParams($request, $this->currentPage($request))
             ],
             'meta' => [
                 'current_page' => $this->currentPage($request),

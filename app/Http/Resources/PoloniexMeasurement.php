@@ -20,13 +20,14 @@ class PoloniexMeasurement extends JsonResource
     public function toArray($request)
     {
         return [
-            'time'   => $this->resource['time'],
-            'open'   => $this->resource['open'],
-            'close'  => $this->resource['close'],
-            'low'    => $this->resource['low'],
-            'high'   => $this->resource['high'],
-            'pair'   => $this->resource['pair'],
-            'volume' => $this->resource['volume'],
+            'time'   => (string) $this->resource['time'],
+            'pair'   => (string) $this->resource['pair'],
+            'open'   => (float) $this->resource['open'],
+            'close'  => (float) $this->resource['close'],
+            'low'    => (float) $this->resource['low'],
+            'high'   => (float) $this->resource['high'],
+            'volume_from' => (float) $this->resource['volume'],
+            'volume_to' => (float) $this->resource['quote_volume'],
         ];
     }
 }

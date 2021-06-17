@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Contracts\InfluxDBMeasurement;
 use App\Http\Requests\ExchangePairRequest;
 use App\Traits\HandlesPagination;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -35,7 +34,6 @@ class ExchangePairController extends Controller
      */
     public function index(ExchangePairRequest $request): JsonResource
     {
-        // todo validation
         // todo scopes
         // todo query params
         // todo time chunking

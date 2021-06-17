@@ -15,7 +15,7 @@ return [
     */
 
     'pagination' => [
-        'default_per_page' => 5000,
+        'default_per_page' => 1000,
         'max_per_page' => 9999
     ],
 
