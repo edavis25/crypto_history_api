@@ -88,4 +88,11 @@ interface InfluxDBMeasurement
      * @return ResourceCollection
      */
     public function buildResourceCollection(array $data, bool $has_next_page): ResourceCollection;
+
+    /**
+     * Return the single most recent measurement recorded as a JSON resource.
+     *
+     * @return JsonResource
+     */
+    public function mostRecentMeasurement(): array;
 }

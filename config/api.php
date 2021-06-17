@@ -15,8 +15,8 @@ return [
     */
 
     'pagination' => [
-        'default_per_page' => 1000,
-        'max_per_page' => 9999
+        'default_per_page' => env('INFLUX_PER_PAGE_DEFAULT', 1000),
+        'max_per_page' => env('INFLUX_PER_PAGE_MAX', 9999)
     ],
 
 ];
