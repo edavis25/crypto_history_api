@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\InfluxDBMeasurement;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use TrayLabs\InfluxDB\Facades\InfluxDB;
 
 /**
@@ -31,7 +32,7 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
     public function getPairs(?int $limit = null, ?int $offset = null): array
     {
         $query = "SHOW TAG VALUES FROM {$this->measurement()} WITH KEY = \"{$this->tagKey()}\"";
-        if ($limit) {
+        if ($limit && $limit > 0) {
             $query .= " LIMIT $limit";
         }
         if ($offset) {
@@ -93,7 +94,8 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
             ->orderBy('time', $this->validOrder($filters['order'] ?? null));
 
         if ($limit = $filters['per_page'] ?? false) {
-            $results->limit($limit);
+            // a limit of 0 will cause memory leaks so force at least 1
+            $results->limit($limit > 0 ? $limit : 1);
         }
         if ($offset = $filters['offset'] ?? false) {
             $results->offset($offset);
@@ -155,5 +157,25 @@ abstract class BaseMeasurementService implements InfluxDBMeasurement
         }
 
         return strtoupper(self::DEFAULT_SORT_ORDER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mostRecentMeasurement(): array
+    {
+        $cache_duration_in_seconds = 60 * 5;
+
+        return Cache::remember("{$this->measurement()}.last_price", $cache_duration_in_seconds, function () {
+            $results = InfluxDB::getQueryBuilder()
+                ->select("*")
+                ->from($this->measurement())
+                ->orderBy('time', 'DESC')
+                ->limit(1)
+                ->getResultSet()
+                ->getPoints();
+
+            return (count($results) > 0) ? $results[0] : [];
+        });
     }
 }
