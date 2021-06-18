@@ -6,7 +6,7 @@ info:
   x-logo:
     url: 'https://raw.githubusercontent.com/edavis25/crypto_history_api/master/public/img/80s_sun.png'
     backgroundColor: '#FFFFFF'
-    altText: Petstore logo
+    altText: Crypto Price History API Logo
   contact:
     name: Eric Davis
     url: 'https://github.com/edavis25/crypto_history_api'
