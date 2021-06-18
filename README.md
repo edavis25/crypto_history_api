@@ -5,7 +5,22 @@ Setup Steps (refine these):
     - normal laravel configs
 - migrations
 - configuration for white-listing measurements
+
 - how to create a new exchange driver
+    - get name of associated measurement in InfluxDB
+    - create service
+        - map the driver in the influxdb.php config file
+        - extend BaseMeasurementService class
+        - add route overrides if desired
+        - create methods to fulfill contract:
+            1. measurement()
+            2. displayName()
+            3. buildResourceCollection()
+            4. buildResource()
+        - create the JSON resources for contract
+            - ensure correct fields exist
+            - use trait for pagination in collection
+            - need to add $has_next_page in constructor
 
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
