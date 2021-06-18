@@ -55,8 +55,7 @@ return [
     */
     'measurements' => [
         'poloniex' => \App\Services\PoloniexMeasurementService::class,
-
-//        'cryptocompare_aggregate' => // todo
+        'cryptocompare_aggregate' => \App\Services\CryptocompareMeasurementService::class
     ],
 
     /*
@@ -75,6 +74,6 @@ return [
     |
     */
     'route_aliases' => [
-//        'cryptocompare' => 'cryptocompare_aggregate'
+        'cryptocompare' => 'cryptocompare_aggregate'
     ]
 ];
