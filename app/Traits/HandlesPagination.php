@@ -16,11 +16,11 @@ trait HandlesPagination
     {
         $default = config('api.pagination.default_per_page');
         $max = config('api.pagination.max_per_page');
-        if ($request->per_page) {
+        if ($request->per_page && $request->per_page > 0) {
             return (int) ($request->per_page <= $max) ? $request->per_page : $max;
         }
 
-        return $default;
+        return (int) $default;
     }
 
     /**

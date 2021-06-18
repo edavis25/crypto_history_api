@@ -40,7 +40,7 @@ class ExchangePairController extends Controller
         // todo log request?
 
         // validates per_page against our max. added to request so JSON resource can use it.
-        $request->request->add([
+        $request->merge([
             'per_page' => $this->perPage($request)
         ]);
 
@@ -76,7 +76,7 @@ class ExchangePairController extends Controller
             // todo time chunking
 
         // validates per_page against our max. added to request so JSON resource can use it.
-        $request->request->add([
+        $request->merge([
             'per_page' => $this->perPage($request)
         ]);
 
