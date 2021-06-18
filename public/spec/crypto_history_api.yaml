@@ -4,7 +4,7 @@ info:
   version: '1.0'
   description: API for retrieving historical price data for various exchanges whose data was personally scraped.
   x-logo:
-    url: 'http://127.0.0.1:8000/img/80s_sun.png'
+    url: 'https://raw.githubusercontent.com/edavis25/crypto_history_api/master/public/img/80s_sun.png'
     backgroundColor: '#FFFFFF'
     altText: Petstore logo
   contact:
