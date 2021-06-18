@@ -1,0 +1,758 @@
+openapi: 3.0.0
+info:
+  title: Crypto Price History API
+  version: '1.0'
+  description: API for retrieving historical price data for various exchanges whose data was personally scraped.
+  x-logo:
+    url: 'http://127.0.0.1:8000/img/80s_sun.png'
+    backgroundColor: '#FFFFFF'
+    altText: Petstore logo
+  contact:
+    name: Eric Davis
+    url: 'https://github.com/edavis25/crypto_history_api'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /api/poloniex/pairs:
+    get:
+      summary: /api/poloniex/pairs
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExchangePair'
+                  links:
+                    type: object
+                    required:
+                      - prev
+                      - next
+                      - current
+                    properties:
+                      prev:
+                        type: string
+                        nullable: true
+                      next:
+                        type: string
+                        nullable: true
+                      current:
+                        type: string
+                  meta:
+                    type: object
+                    required:
+                      - current_page
+                      - per_page
+                      - max_per_page
+                    properties:
+                      current_page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      max_per_page:
+                        type: integer
+                required:
+                  - data
+                  - links
+                  - meta
+              examples:
+                Example:
+                  value:
+                    data:
+                      - time: '2021-06-16T05:35:00Z'
+                        pair: usdt_xmr
+                        open: 283.12810584
+                        close: 283.12810584
+                        low: 283.12810584
+                        high: 283.12810584
+                        volume_from: 251.1284775
+                        volume_to: 0.88697827
+                    links:
+                      prev: null
+                      next: 'http://127.0.0.1:8001/api/poloniex/pairs?per_page=1&page=2'
+                      current: 'http://127.0.0.1:8001/api/poloniex/pairs?per_page=1&page=1'
+                    meta:
+                      current_page: 1
+                      per_page: 1
+                      max_per_page: 9999
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+      operationId: get-api-exchanges
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/After'
+      description: Retrieve price data for all trading pairs for the Poloniex exchange.
+    parameters: []
+  '/api/poloniex/pairs/{pair}':
+    parameters:
+      - schema:
+          type: string
+          example: usd_btc
+        name: pair
+        in: path
+        required: true
+        description: Trading pair for filtering results.
+    get:
+      summary: '/api/poloniex/pairs/{pair}'
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExchangePair'
+                  links:
+                    type: object
+                    required:
+                      - prev
+                      - next
+                      - current
+                    properties:
+                      prev:
+                        type: string
+                        nullable: true
+                      next:
+                        type: string
+                        nullable: true
+                      current:
+                        type: string
+                  meta:
+                    type: object
+                    required:
+                      - current_page
+                      - per_page
+                      - max_per_page
+                    properties:
+                      current_page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      max_per_page:
+                        type: integer
+                required:
+                  - data
+                  - links
+                  - meta
+              examples:
+                Example:
+                  value:
+                    data:
+                      - time: '2021-06-16T05:35:00Z'
+                        pair: usdt_xmr
+                        open: 283.12810584
+                        close: 283.12810584
+                        low: 283.12810584
+                        high: 283.12810584
+                        volume_from: 251.1284775
+                        volume_to: 0.88697827
+                    links:
+                      prev: null
+                      next: 'http://127.0.0.1:8001/api/poloniex/pairs/usdt_xmr?per_page=1&page=2'
+                      current: 'http://127.0.0.1:8001/api/poloniex/pairs/usdt_xmr?per_page=1&page=1'
+                    meta:
+                      current_page: 1
+                      per_page: 1
+                      max_per_page: 9999
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+      operationId: get-qpi-poloniex-pairs-pair
+      description: Retrieve price data for a given pair associated with the Poloniex exchange. Each exchange's supported pairs can be retrieved from the "/api/exchanges" endpoint.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/After'
+  /api/exhanges:
+    get:
+      summary: /api/exchanges
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - name: Poloniex
+                        base_endpoint: /api/poloniex/
+                        pairs:
+                          - btc_amp
+                          - btc_bcn
+                          - btc_bcy
+                          - btc_bela
+                          - btc_blk
+                          - btc_btcd
+                properties:
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          minLength: 1
+                        base_endpoint:
+                          type: string
+                          minLength: 1
+                          description: The base endpoint used to query price data for the exchange.
+                        pairs:
+                          type: array
+                          description: Array of the names of all supported trading pairs for the exchange.
+                          items:
+                            type: string
+                      required:
+                        - name
+                        - base_endpoint
+                        - pairs
+                required:
+                  - data
+              examples:
+                Example:
+                  value:
+                    data:
+                      - name: Poloniex
+                        base_endpoint: /api/poloniex/
+                        pairs:
+                          - btc_amp
+                          - btc_bcn
+                          - btc_bcy
+                          - btc_bela
+                          - btc_blk
+                          - btc_btcd
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-api-exhanges
+      description: List all of the exchanges and their associated trading pairs the API has data for.
+  /api/cryptocompare/pairs:
+    get:
+      summary: /api/cryptocompare/pairs
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExchangePair'
+                  links:
+                    type: object
+                    required:
+                      - prev
+                      - next
+                      - current
+                    properties:
+                      prev:
+                        type: string
+                        nullable: true
+                      next:
+                        type: string
+                        nullable: true
+                      current:
+                        type: string
+                  meta:
+                    type: object
+                    required:
+                      - current_page
+                      - per_page
+                      - max_per_page
+                    properties:
+                      current_page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      max_per_page:
+                        type: integer
+                required:
+                  - data
+                  - links
+                  - meta
+              examples:
+                Example:
+                  value:
+                    data:
+                      - time: '2021-06-16T05:35:00Z'
+                        pair: xrp_usd
+                        open: 0.31812816
+                        close: 0.33812812
+                        low: 0.33112344
+                        high: 0.34812251
+                        volume_from: 251.1284775
+                        volume_to: 0.88697827
+                    links:
+                      prev: null
+                      next: 'http://127.0.0.1:8001/api/cryptocompare/pairs?per_page=1&page=2'
+                      current: 'http://127.0.0.1:8001/api/cryptocompare/pairs?per_page=1&page=1'
+                    meta:
+                      current_page: 1
+                      per_page: 1
+                      max_per_page: 9999
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+      operationId: get-api-cryptocompare-pairs
+      description: Retrieve price data for all trading pairs from Cryptocompare.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/After'
+  '/api/cryptocompare/pairs/{pair}':
+    parameters:
+      - schema:
+          type: string
+        name: pair
+        in: path
+        required: true
+    get:
+      summary: '/api/cryptocompare/pairs/{pair}'
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExchangePair'
+                  links:
+                    type: object
+                    required:
+                      - prev
+                      - next
+                      - current
+                    properties:
+                      prev:
+                        type: string
+                        nullable: true
+                      next:
+                        type: string
+                        nullable: true
+                      current:
+                        type: string
+                  meta:
+                    type: object
+                    required:
+                      - current_page
+                      - per_page
+                      - max_per_page
+                    properties:
+                      current_page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      max_per_page:
+                        type: integer
+                required:
+                  - data
+                  - links
+                  - meta
+              examples:
+                Example:
+                  value:
+                    data:
+                      - time: '2021-06-16T05:35:00Z'
+                        pair: xrp_usd
+                        open: 0.31812816
+                        close: 0.33812812
+                        low: 0.33112344
+                        high: 0.34812251
+                        volume_from: 251.1284775
+                        volume_to: 0.88697827
+                    links:
+                      prev: null
+                      next: 'http://127.0.0.1:8001/api/cryptocompare/pairs/xrp_usd?per_page=1&page=2'
+                      current: 'http://127.0.0.1:8001/api/cryptocompare/pairs/xrp_usd?per_page=1&page=1'
+                    meta:
+                      current_page: 1
+                      per_page: 1
+                      max_per_page: 9999
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HttpError'
+      operationId: get-api-cryptocompare-pairs-pair
+      description: Retrieve price data for a given pair associated with the Cryptocompare data. Each exchange's supported pairs can be retrieved from the "/api/exchanges" endpoint.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/After'
+components:
+  schemas:
+    HttpError:
+      title: HttpError
+      type: object
+      examples:
+        - code: 404
+          message: Resource not found.
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      required:
+        - code
+        - message
+      x-examples:
+        Example:
+          value:
+            code: 404
+            message: Resource not found.
+    ValidationError:
+      title: ValidationError
+      type: object
+      examples:
+        - code: 422
+          message: The given data was invalid.
+          errors:
+            order:
+              - 'order must be: ''ASC'' or ''DESC''.'
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: object
+          description: Object where key names are equal to the invalid paramater names. Each key contains an array of strings listing the description messages for each rule the input has failed.
+          properties:
+            '{field name}':
+              type: array
+              items: {}
+      required:
+        - code
+        - message
+        - errors
+      x-examples:
+        Example:
+          value:
+            code: 422
+            message: The given data was invalid.
+            errors:
+              order:
+                - 'order must be: ''ASC'' or ''DESC''.'
+    Exchange:
+      title: Exchange
+      type: object
+      examples:
+        - name: Poloniex
+          base_endpoint: /api/poloniex/
+          pairs:
+            - btc_amp
+            - btc_bcn
+            - btc_bcy
+            - btc_bela
+            - btc_blk
+            - btc_btcd
+            - btc_btm
+            - btc_bts
+      properties:
+        name:
+          type: string
+        base_endpoint:
+          type: string
+          description: Base endpoint for retrieving price data from the exchange.
+        pairs:
+          type: array
+          description: List of the trading pairs supported for the exchange.
+          items:
+            type: string
+      required:
+        - name
+        - base_endpoint
+        - pairs
+      x-examples:
+        Example:
+          value:
+            name: Poloniex
+            base_endpoint: /api/poloniex/
+            pairs:
+              - btc_amp
+              - btc_bcn
+              - btc_bcy
+              - btc_bela
+              - btc_blk
+              - btc_btcd
+              - btc_btm
+              - btc_bts
+      description: ''
+    ExchangePair:
+      title: ExchangePair
+      type: object
+      properties:
+        time:
+          type: string
+        pair:
+          type: string
+        open:
+          type: number
+        close:
+          type: number
+        low:
+          type: number
+        high:
+          type: number
+        volume_from:
+          type: number
+          description: Volume for the base asset (e.g. "usd" if pair = "usd_btc")
+        volume_to:
+          type: number
+          description: Volume for the traded for asset (e.g. "btc" if pair = "usd_btc")
+      required:
+        - time
+        - pair
+        - open
+        - close
+        - low
+        - high
+        - volume_from
+        - volume_to
+      examples:
+        - time: '2021-06-16T05:35:00Z'
+          pair: usdt_xmr
+          open: 283.12810584
+          close: 283.12810584
+          low: 283.12810584
+          high: 283.12810584
+          volume_from: 251.1284775
+          volume_to: 0.88697827
+      x-examples:
+        Example:
+          value:
+            time: '2021-06-16T05:35:00Z'
+            pair: usdt_xmr
+            open: 283.12810584
+            close: 283.12810584
+            low: 283.12810584
+            high: 283.12810584
+            volume_from: 251.1284775
+            volume_to: 0.88697827
+  parameters:
+    Order:
+      name: order
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - ASC
+          - DESC
+        example: ASC
+      description: Sort order for results.
+    PerPage:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 9999
+      description: Number of results per page.
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Page of results to return.
+    Before:
+      name: before
+      in: query
+      schema:
+        type: integer
+        example: 1623821700
+      description: UNIX timestamp for filtering results with upper bound for time  (i.e. all records occurring before this time)
+    After:
+      name: after
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 1623818700
+      description: UNIX timestamp for filtering results with lower bound for time (i.e. all records occurring after this time)
