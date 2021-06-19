@@ -40,7 +40,7 @@ Now that your environment is setup, we can begin mapping our InfluxDB measuremen
 3. Map our new service class inside the `influxdb.php` config file.
 
 #### 1. Creating the service
-Every InfluxDB measurement will need its own service implementing the `InfluxDBMeasurement` contract so that it can be dynamically injected into the controllers. As a starting point, you can start by creating a class that extends the `BaseMeasurementService` which will fulfill a majority of the contract's functionality.
+Every InfluxDB measurement will need its own service implementing the `InfluxDBMeasurement` contract so that it can be dynamically injected into the controllers. As a starting point, you can create a class that extends the `BaseMeasurementService` which will fulfill a majority of the contract's functionality.
 <br>
 ```
 class PoloniexMeasurementService extends BaseMeasurementService
