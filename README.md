@@ -72,7 +72,7 @@ class PoloniexMeasurementService extends BaseMeasurementService
 }
 ```
 
-At the very least, each service will need to implement these methods individually. If you need more customization, you can override the functions inside the `BaseMeasurementService` as necessary.
+At the very least, each service will need to implement the methods shown above individually. If you mostly follow the InfluxDB setup explained above, you can rely on the `BaseMeasurementService` to fulfill most of the contract. If you need more customization, you can override the functions inside the `BaseMeasurementService` as necessary.
 
 #### 2. Creating the JSON resources
 If you noticed in that last step that we were building resources that didn't exist yet, good eyes. Let's do that now.
